@@ -1,0 +1,22 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+</head>
+<body>
+<script>
+    const parseUrl = function (e) {
+        if (e && "string" == typeof e) {
+            let temp = e.replace(/^(https?:)?\/\//, "")
+            debugger
+            return temp.replace(/\?.*$/, "")
+        }
+
+        return ''
+    }
+
+    parseUrl('https://www.baidu.com?a=1&b=2')
+</script>
+</body>
+</html>
