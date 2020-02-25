@@ -35,6 +35,7 @@ export function hackConsole() {
  * 派送historystatechange historystatechange事件
  * @export
  * @param {('pushState' | 'replaceState')} e
+ * ？？？ 具体跑一下
  */
 export function hackState(e: 'pushState' | 'replaceState') {
   var t = history[e]
@@ -66,6 +67,7 @@ export function hackhook() {
   hackAjax()
 }
 
+// ??? 可以具体跑一下
 function hackFetch(){
   if ("function" == typeof window.fetch) {
     var __oFetch_ = window.fetch
@@ -98,6 +100,7 @@ function hackFetch(){
 }
 
 // 如果返回过长，会被截断，最长1000个字符
+// ??? 具体跑一下
 function hackAjax() {
   if ("function" == typeof window.XMLHttpRequest) {
     var begin = 0,

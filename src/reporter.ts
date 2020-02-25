@@ -25,6 +25,7 @@ export function send(msg: ReportData) {
   // new Image().src = `${Config.reportUrl}?${serialize(msg)}`
 }
 
+// post方式上传信息
 export function post(url, body) {
   var XMLHttpRequest = window.__oXMLHttpRequest_ || window.XMLHttpRequest;
   if (typeof XMLHttpRequest === 'function') {
