@@ -167,7 +167,7 @@ export function handlePerf(): void {
     fpt: 0,
     tti: 0,
     ready: 0,
-    load: 0 // domready时间 
+    load: 0 // domready时间
   },
   timing = performance.timing || {},
   now = Date.now(),
@@ -175,13 +175,13 @@ export function handlePerf(): void {
   let stateCheck = setInterval(() => {
     if (timing.loadEventEnd) {
       clearInterval(stateCheck)
-    
+
       // 根据PerformanceNavigationTiming计算更准确
       if ("function" == typeof window.PerformanceNavigationTiming) {
           var c = performance.getEntriesByType("navigation")[0];
           c && (timing = c, type = 2)
       }
-    
+
       // 计算data
       each({
         dns: [3, 2],
@@ -207,7 +207,7 @@ export function handlePerf(): void {
               c >= 0 && c < 36e5 && (data[t] = c)
           }
       });
-    
+
       var u = window.navigator.connection || (window.navigator as any).mozConnection || (window.navigator as any).webkitConnection,
           f = performance.navigation || { type: undefined };
       data.ct = u ? u.effectiveType || u.type : "";
@@ -216,8 +216,8 @@ export function handlePerf(): void {
           var h = timing[TIMING_KEYS[16]] - timing[TIMING_KEYS[1]];
           h >= 0 && h < 36e5 && (data.fpt = h)
       }
-      1 === type && timing[TIMING_KEYS[1]] > 0 
-            ? data.begin = timing[TIMING_KEYS[1]] 
+      1 === type && timing[TIMING_KEYS[1]] > 0
+            ? data.begin = timing[TIMING_KEYS[1]]
             : 2 === type && data.load > 0 ? data.begin = now -
             data.load : data.begin = now
       let commonMsg = getCommonMsg()
@@ -265,6 +265,7 @@ export function handleNavigation(page): void {
 
 
 export function setPage(page, isFirst?: boolean) {
+  // 第一次不上传健康指标
   !isFirst && handleHealth()
   handleNavigation(page)
   if (isInIframe) {

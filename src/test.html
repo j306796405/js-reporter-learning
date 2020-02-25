@@ -6,17 +6,12 @@
 </head>
 <body>
 <script>
-    const parseUrl = function (e) {
-        if (e && "string" == typeof e) {
-            let temp = e.replace(/^(https?:)?\/\//, "")
-            debugger
-            return temp.replace(/\?.*$/, "")
-        }
-
-        return ''
+    function testArgs () {
+      const arr = [...arguments]
+      console.log(Array.isArray(arr))
     }
 
-    parseUrl('https://www.baidu.com?a=1&b=2')
+    testArgs('a', 'b', 'c')
 </script>
 </body>
 </html>

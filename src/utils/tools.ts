@@ -89,7 +89,7 @@ export const fnToString = function (e: string) {
     }
 }
 
-// 劫持了console.warn，但没做额外处理
+// console.warn做了兼容处理，？？？但没做额外处理
 export const warn: any = function () {
     var e = "object" == typeof console ? console.warn : noop;
     try {

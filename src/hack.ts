@@ -6,11 +6,13 @@ import { Config } from './config'
 // "debug", "info", "warn", "log", "error"
 export function hackConsole() {
   if (window && window.console) {
+    // 递归预设的种类
     for (var e = Config.behavior.console, n = 0; e.length; n++) {
       var r = e[n];
       var action = window.console[r]
       if (!window.console[r]) return;
         (function (r, action) {
+          // 利用闭包重写console方法
           window.console[r] = function() {
             var i = Array.prototype.slice.apply(arguments)
             var s: consoleBehavior = {
@@ -141,9 +143,16 @@ function hackAjax() {
   }
 }
 
+/**
+ * onPopState hack方法
+ * 调用history.pushState()或者history.replaceState()不会触发popstate事件.
+ * popstate事件只会在浏览器某些行为下触发, 比如点击后退、前进按钮
+ * 或者在JavaScript中调用history.back()、history.forward()、history.go()方法.
+ * */
 export function hackOnpopstate() {
   window['__bb_onpopstate_'] = window.onpopstate
   window.onpopstate = function () {
+    // 专属组，[...arguments]就完事了
     for (var r = arguments.length, a = new Array(r), o = 0; o < r; o++) a[o] = arguments[o];
     let page = Config.enableSPA ? parseHash(location.hash.toLowerCase()) : location.pathname.toLowerCase()
     setPage(page, false)

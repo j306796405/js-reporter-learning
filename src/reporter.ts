@@ -2,18 +2,19 @@
 import { Config, } from './config'
 import { queryString, serialize, warn } from './utils/tools'
 
-// 上报
+// 上报  ？？？为啥上报health需要使用sendBeacon方法
 export function report(e: ReportData) {
-    "res" === e.t ? 
-    send(e) 
-      : "error" === e.t ? send(e) 
-      : "behavior" === e.t ? send(e) 
-      : "health" === e.t && window && window.navigator && "function" == typeof window.navigator.sendBeacon ? sendBeacon(e) 
+    "res" === e.t ?
+    send(e)
+      : "error" === e.t ? send(e)
+      : "behavior" === e.t ? send(e)
+      : "health" === e.t && window && window.navigator && "function" == typeof window.navigator.sendBeacon ? sendBeacon(e)
       : send(e);
   return this
 }
 
 // post上报
+// ？？？1：msg[msg.t]没看懂 2：为啥不使用图片的方式 3: 图片上报需要作长度限制
 export function send(msg: ReportData) {
   var body = msg[msg.t]
   delete msg[msg.t]
@@ -33,10 +34,10 @@ export function post(url, body) {
       xhr.setRequestHeader("Content-Type", "text/plain")
       xhr.send(JSON.stringify(body))
     } catch (e) {
-      warn('[bombayjs] Failed to log, POST请求失败')
+      warn('[monitor] Failed to log, POST请求失败')
     }
   } else {
-    warn('[bombayjs] Failed to log, 浏览器不支持XMLHttpRequest')
+    warn('[monitor] Failed to log, 浏览器不支持XMLHttpRequest')
   }
 }
 
@@ -44,7 +45,7 @@ export function post(url, body) {
 export function sendBeacon(e:any) {
   "object" == typeof e && (e = serialize(e));
   e = `${Config.reportUrl}?${e}`
-  window && window.navigator && "function" == typeof window.navigator.sendBeacon 
-    ? window.navigator.sendBeacon(e) 
-    : warn("[arms] navigator.sendBeacon not surported")
+  window && window.navigator && "function" == typeof window.navigator.sendBeacon
+    ? window.navigator.sendBeacon(e)
+    : warn("[monitor] navigator.sendBeacon not supported")
 }
