@@ -1,11 +1,12 @@
 import { Config, getConfig, } from './config'
 import { queryString, serialize, each, parseHash, warn, splitGroup,on,off, isInIframe, findIndex, checkEdge, isTypeOf } from './utils/tools'
-import { getCommonMsg } from './utils/index'
+import { getCommonMsg } from './utils'
 import { report } from './reporter'
 import { setGlobalPage, setGlobalSid, setGlobalHealth, GlobalVal, resetGlobalHealth,} from './config/global'
 
 const CIRCLECLS = 'bombayjs-circle-active' // circle class类名
 const CIRCLESTYLEID = 'bombayjs-circle-css' // 插入的style标签id
+
 // 处理pv
 export function handlePv(): void {
   if (!Config.autoSendPv) return
@@ -28,9 +29,10 @@ export function handlePv(): void {
 const normalTarget = function (e) {
   var t, n, r, a, i, o = [];
   if (!e || !e.tagName) return "";
+  // '，'分割的话会取最后一个'，'的bool作为结果
   if (o.push(e.tagName.toLowerCase()), e.id && o.push("#".concat(e.id)), (t = e.className) && "[object String]" === Object.prototype.toString.call(t)) {
     for (n = t.split(/\s+/), i = 0; i < n.length; i++) {
-      // className包含active的不加入路径
+      // className包含active的不加入路径 ？？？非常不严谨
       if (n[i].indexOf('active') < 0) o.push(".".concat(n[i]));
     }
   }

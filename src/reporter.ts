@@ -42,7 +42,7 @@ export function post(url, body) {
   }
 }
 
-// 健康检查上报
+// sendBeacon方式上报
 export function sendBeacon(e:any) {
   "object" == typeof e && (e = serialize(e));
   e = `${Config.reportUrl}?${e}`
