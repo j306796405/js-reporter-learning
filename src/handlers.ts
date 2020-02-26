@@ -26,6 +26,7 @@ export function handlePv(): void {
 }
 
 // 处理html node
+// return div#id.a.b.c[name="sex"][type="input"]
 const normalTarget = function (e) {
   var t, n, r, a, i, o = [];
   if (!e || !e.tagName) return "";
@@ -43,7 +44,12 @@ const normalTarget = function (e) {
 }
 
 // 获取元素路径，最多保留5层
+// ？？？跑一下
 const getElmPath = function (e) {
+  /**
+   * nodeType 1: 节点 2：属性 3：text
+   * 非dom节点 直接return
+   * */
   if (!e || 1 !== e.nodeType) return "";
   var ret = [],
       deepLength = 0, // 层数，最多5层
@@ -55,13 +61,17 @@ const getElmPath = function (e) {
   return ret.reverse().join(" > ")
 }
 
+// 点击事件上报
+// ？？？跑一下
 export function handleClick(event) {
   // 正在圈选
   if (GlobalVal.circle) {
     let target = event.target
+    // !!! 方法可以提取
     let clsArray = target.className.split(/\s+/)
     let path = getElmPath(event.target)
     // clsArray 为 ['bombayjs-circle-active] 或 ['', 'bombayjs-circle-active]时
+    // ？？？是不是还有可能['', 'bombayjs-circle-active, '']
     if (clsArray.length === 1 || (clsArray.length === 2 && clsArray[0] === '')) {
       path = path.replace(/\.\.bombayjs-circle-active/, '')
     } else {
@@ -105,6 +115,7 @@ export function handleClick(event) {
   }
 }
 
+// blur事件上报
 export function handleBlur(event) {
   var target;
   try {
@@ -136,6 +147,7 @@ export function handleBlur(event) {
   }
 }
 
+// behavior上报
 export function handleBehavior(behavior: Behavior): void {
   let commonMsg = getCommonMsg()
   let msg: behaviorMsg = {
@@ -154,6 +166,7 @@ const TIMING_KEYS = ["", "fetchStart", "domainLookupStart", "domainLookupEnd", "
   "secureConnectionStart"]
 
 // 处理性能
+// ？？？代码应该是楼主抄的，跑一下吧
 export function handlePerf(): void {
   const performance = window.performance
   if (!performance || 'object' !== typeof performance) return
@@ -247,6 +260,7 @@ export function handleHistorystatechange(e): void {
 }
 
 // 处理pv
+// ？？？跑一下
 export function handleNavigation(page): void {
   let commonMsg = getCommonMsg()
   let msg: behaviorMsg = {
@@ -265,7 +279,7 @@ export function handleNavigation(page): void {
   report(msg)
 }
 
-
+// 上报页面信息
 export function setPage(page, isFirst?: boolean) {
   // 第一次不上传健康指标
   !isFirst && handleHealth()
@@ -282,6 +296,7 @@ export function setPage(page, isFirst?: boolean) {
   handlePv()
 }
 
+// 上报健康信息
 export function handleHealth() {
   let healthy = GlobalVal._health.errcount ? 0 : 1
   let commonMsg = getCommonMsg()
@@ -536,7 +551,7 @@ export function handleMsg(key: string) {
 //   report(ret)
 // }
 
-
+// ？？？'bombayjs-circle-active'清除后加载最后
 export function handleHover(e) {
   var cls = document.getElementsByClassName(CIRCLECLS)
   if (cls.length > 0) {
@@ -547,6 +562,7 @@ export function handleHover(e) {
   e.target.className += ` ${CIRCLECLS}`
 }
 
+// 添加'bombayjs-circle-active'样式
 export function insertCss() {
   var content = `.${CIRCLECLS}{border: #ff0000 2px solid;}`
   var style = document.createElement("style");
@@ -561,6 +577,7 @@ export function insertCss() {
   head.appendChild(style);
 }
 
+// 移除'bombayjs-circle-active'样式
 export function removeCss() {
   var style = document.getElementById(CIRCLESTYLEID)
   style.parentNode.removeChild(style)
@@ -577,6 +594,7 @@ export function removeCircleListener() {
   removeCss()
   GlobalVal.cssInserted = false
   GlobalVal.circle = false
+  // ？？？off会触发handleHover吗
   off('mouseover', handleHover);
 }
 
