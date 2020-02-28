@@ -2,7 +2,7 @@
     typeof exports === 'object' && typeof module !== 'undefined' ? module.exports = factory() :
     typeof define === 'function' && define.amd ? define(factory) :
     (global = global || self, global.Bombay = factory());
-}(this, function () { 'use strict';
+}(this, (function () { 'use strict';
 
     /*! *****************************************************************************
     Copyright (c) Microsoft Corporation. All rights reserved.
@@ -74,12 +74,16 @@
     function setConfig(options) {
         Config = __assign(__assign({}, Config), options);
     }
+    // 获取具体参数
     function getConfig(e) {
         return e ? Config[e] ? Config[e] : {} : {};
     }
     //# sourceMappingURL=index.js.map
 
-    var noop = function () { };
+    // 返回一个空方法
+    var noop = function () {
+    };
+    // 随机字符串 ？？？
     function randomString() {
         for (var e, t, n = 20, r = new Array(n), a = Date.now().toString(36).split(""); n-- > 0;)
             t = (e = 36 * Math.random() | 0).toString(36), r[n] = e % 3 ? t : t.toUpperCase();
@@ -87,7 +91,7 @@
             r.splice(3 * i + 2, 0, a[i]);
         return r.join("");
     }
-    // 将{ method: 'get', state: '200' }转为?method=get&state=200
+    // 序列化 将{ method: 'get', state: '200' }转为?method=get&state=200
     function serialize(obj) {
         var str = [];
         for (var p in obj)
@@ -96,6 +100,7 @@
             }
         return str.join("&");
     }
+    // 兼容数字及对象的each方法
     function each(data, fn) {
         var n = 0, r = data.length;
         if (isTypeOf(data, 'Array'))
@@ -119,30 +124,45 @@
         var n = Object.prototype.toString.call(data).substring(8).replace("]", "");
         return type ? n === type : n;
     }
+    // 事件绑定
     var on = function (event, fn, remove) {
         window.addEventListener ? window.addEventListener(event, function a(i) {
+            /**
+             * 很省行数的写法啊。。。
+             * this => window
+             * */
             remove && window.removeEventListener(event, a, true), fn.call(this, i);
         }, true) : window.attachEvent && window.attachEvent("on" + event, function i(a) {
             remove && window.detachEvent("on" + event, i), fn.call(this, a);
         });
     };
+    // 解除事件绑定
     var off = function (event, fn) {
         return fn ? (window.removeEventListener ? window.removeEventListener(event, fn) : window.detachEvent &&
             window.detachEvent(event, fn), this) : this;
     };
+    // 获取spa的页面名称，如果e为空默认为首页
     var parseHash = function (e) {
         return (e ? parseUrl(e.replace(/^#\/?/, "")) : "") || "[index]";
     };
+    // 获取域名
     var parseUrl = function (e) {
-        return e && "string" == typeof e ? e.replace(/^(https?:)?\/\//, "").replace(/\?.*$/, "") : "";
+        return e && "string" == typeof e
+            // 1: 剔除http或者https 2: 剔除？之后的传参
+            ? e.replace(/^(https?:)?\/\//, "").replace(/\?.*$/, "")
+            : "";
     };
     // 函数toString方法
+    // ？？？ 没有太大的差别啊 "pushState() { [native code] }" 和原方法 "function replaceState() { [native code] }"
     var fnToString = function (e) {
         return function () {
+            debugger;
             return e + "() { [native code] }";
         };
     };
+    // console.warn做了兼容处理，？？？但没做额外处理
     var warn = function () {
+        debugger;
         var e = "object" == typeof console ? console.warn : noop;
         try {
             var t = {
@@ -167,6 +187,7 @@
     };
     // group::key
     var splitGroup = function (e) {
+        debugger;
         var n = e.split("::");
         return n.length > 1 ? {
             group: n[0],
@@ -190,6 +211,7 @@
         var isEdge = navigator.userAgent.indexOf("Edge") > -1;
         return isEdge;
     };
+    // 是不是iframe
     var isInIframe = self != top;
     //# sourceMappingURL=tools.js.map
 
@@ -203,17 +225,23 @@
             apisucc: 0,
             apifail: 0
         },
+        // ???
         circle: false,
+        // ???
         cssInserted: false,
     };
+    // 设置页面名称
     function setGlobalPage(page) {
         GlobalVal.page = page;
     }
+    // 设置sid
     function setGlobalSid() {
         GlobalVal.sid = randomString();
         GlobalVal.sBegin = Date.now();
     }
+    // 设置页面健康度
     function setGlobalHealth(type, success) {
+        debugger;
         if (type === 'error')
             GlobalVal._health.errcount++;
         if (type === 'api' && success)
@@ -221,6 +249,7 @@
         if (type === 'api' && !success)
             GlobalVal._health.apifail++;
     }
+    // 重置页面健康度
     function resetGlobalHealth() {
         GlobalVal._health = {
             errcount: 0,
@@ -251,7 +280,7 @@
         };
         return data;
     }
-    // 获取页面
+    // 获取页面 ？？？单页取值是否有问题
     function getPage() {
         if (GlobalVal.page)
             return GlobalVal.page;
@@ -285,6 +314,7 @@
         lang = lang.substr(0, 2); //截取lang前2位字符
         return lang;
     }
+    // 获取屏幕宽高
     function getScreen() {
         var w = document.documentElement.clientWidth || document.body.clientWidth;
         var h = document.documentElement.clientHeight || document.body.clientHeight;
@@ -293,6 +323,7 @@
     //# sourceMappingURL=index.js.map
 
     // 上报
+    // 1: ？？？为啥上报health需要使用sendBeacon方法 2: ？？？写法过于复杂
     function report(e) {
         "res" === e.t ?
             send(e)
@@ -303,8 +334,17 @@
         return this;
     }
     // post上报
+    // ？？？1：为啥不使用图片的方式 ？？？2: 图片上报需要作长度限制
     function send(msg) {
         var _a;
+        /**
+         * msg中会有t代表主题信息，对应的主题有对应的key
+         * msg: {
+         *     t: 'behavior',
+         *     behavior: { ... }
+         * }
+         * */
+        debugger;
         var body = msg[msg.t];
         delete msg[msg.t];
         var url = Config.reportUrl + "?" + serialize(msg);
@@ -313,6 +353,7 @@
             _a));
         // new Image().src = `${Config.reportUrl}?${serialize(msg)}`
     }
+    // post方式上传信息
     function post(url, body) {
         var XMLHttpRequest = window.__oXMLHttpRequest_ || window.XMLHttpRequest;
         if (typeof XMLHttpRequest === 'function') {
@@ -323,22 +364,21 @@
                 xhr.send(JSON.stringify(body));
             }
             catch (e) {
-                warn('[bombayjs] Failed to log, POST请求失败');
+                warn('[monitor] Failed to log, POST请求失败');
             }
         }
         else {
-            warn('[bombayjs] Failed to log, 浏览器不支持XMLHttpRequest');
+            warn('[monitor] Failed to log, 浏览器不支持XMLHttpRequest');
         }
     }
-    // 健康检查上报
+    // sendBeacon方式上报
     function sendBeacon(e) {
         "object" == typeof e && (e = serialize(e));
         e = Config.reportUrl + "?" + e;
         window && window.navigator && "function" == typeof window.navigator.sendBeacon
             ? window.navigator.sendBeacon(e)
-            : warn("[arms] navigator.sendBeacon not surported");
+            : warn("[monitor] navigator.sendBeacon not supported");
     }
-    //# sourceMappingURL=reporter.js.map
 
     var CIRCLECLS = 'bombayjs-circle-active'; // circle class类名
     var CIRCLESTYLEID = 'bombayjs-circle-css'; // 插入的style标签id
@@ -358,13 +398,16 @@
         report(msg);
     }
     // 处理html node
+    // return div#id.a.b.c[name="sex"][type="input"]
     var normalTarget = function (e) {
+        debugger;
         var t, n, r, a, i, o = [];
         if (!e || !e.tagName)
             return "";
+        // '，'分割的话会取最后一个'，'的bool作为结果
         if (o.push(e.tagName.toLowerCase()), e.id && o.push("#".concat(e.id)), (t = e.className) && "[object String]" === Object.prototype.toString.call(t)) {
             for (n = t.split(/\s+/), i = 0; i < n.length; i++) {
-                // className包含active的不加入路径
+                // className包含active的不加入路径 ？？？非常不严谨
                 if (n[i].indexOf('active') < 0)
                     o.push(".".concat(n[i]));
             }
@@ -375,7 +418,13 @@
         return o.join("");
     };
     // 获取元素路径，最多保留5层
+    // ？？？跑一下
     var getElmPath = function (e) {
+        /**
+         * nodeType 1: 节点 2：属性 3：text
+         * 非dom节点 直接return
+         * */
+        debugger;
         if (!e || 1 !== e.nodeType)
             return "";
         var ret = [], deepLength = 0, // 层数，最多5层
@@ -386,13 +435,18 @@
         }
         return ret.reverse().join(" > ");
     };
+    // 点击事件上报
+    // ？？？跑一下
     function handleClick(event) {
+        debugger;
         // 正在圈选
         if (GlobalVal.circle) {
             var target_1 = event.target;
+            // !!! 方法可以提取
             var clsArray = target_1.className.split(/\s+/);
             var path = getElmPath(event.target);
             // clsArray 为 ['bombayjs-circle-active] 或 ['', 'bombayjs-circle-active]时
+            // ？？？是不是还有可能['', 'bombayjs-circle-active, '']
             if (clsArray.length === 1 || (clsArray.length === 2 && clsArray[0] === '')) {
                 path = path.replace(/\.\.bombayjs-circle-active/, '');
             }
@@ -435,7 +489,9 @@
             report(msg);
         }
     }
+    // blur事件上报
     function handleBlur(event) {
+        debugger;
         var target;
         try {
             target = event.target;
@@ -464,6 +520,7 @@
             report(msg);
         }
     }
+    // behavior上报
     function handleBehavior(behavior) {
         var commonMsg = getCommonMsg();
         var msg = __assign(__assign({}, commonMsg), {
@@ -477,6 +534,7 @@
         "domContentLoadedEventEnd", "", "loadEventStart", "", "msFirstPaint",
         "secureConnectionStart"];
     // 处理性能
+    // ？？？代码应该是楼主抄的，跑一下吧
     function handlePerf() {
         var performance = window.performance;
         if (!performance || 'object' !== typeof performance)
@@ -493,9 +551,10 @@
             fpt: 0,
             tti: 0,
             ready: 0,
-            load: 0 // domready时间 
+            load: 0 // domready时间
         }, timing = performance.timing || {}, now = Date.now(), type = 1;
         var stateCheck = setInterval(function () {
+            debugger;
             if (timing.loadEventEnd) {
                 clearInterval(stateCheck);
                 // 根据PerformanceNavigationTiming计算更准确
@@ -555,7 +614,7 @@
         var page = Config.enableSPA ? parseHash(e.detail.toLowerCase()) : e.detail.toLowerCase();
         page && setPage(page, false);
     }
-    // 处理pv
+    // 上报跳转动作信息
     function handleNavigation(page) {
         var commonMsg = getCommonMsg();
         var msg = __assign(__assign({}, commonMsg), {
@@ -570,9 +629,12 @@
         });
         report(msg);
     }
+    // 上报页面信息
     function setPage(page, isFirst) {
+        // 第一次不上传健康指标
         !isFirst && handleHealth();
         handleNavigation(page);
+        // ？？？后续需要测试iframe的情况
         if (isInIframe) {
             window.parent.postMessage({
                 t: 'setPage',
@@ -584,7 +646,9 @@
         setGlobalSid();
         handlePv();
     }
+    // 上报健康信息
     function handleHealth() {
+        debugger;
         var healthy = GlobalVal._health.errcount ? 0 : 1;
         var commonMsg = getCommonMsg();
         var ret = __assign(__assign(__assign({}, commonMsg), GlobalVal._health), {
@@ -597,6 +661,7 @@
     }
     // 处理错误
     function handleErr(error) {
+        debugger;
         switch (error.type) {
             case 'error':
                 error instanceof ErrorEvent ? reportCaughtError(error) : reportResourceError(error);
@@ -612,6 +677,7 @@
     }
     // 捕获js异常
     function reportCaughtError(error) {
+        debugger;
         var commonMsg = getCommonMsg();
         var n = error.name || "CustomError", a = error.message || "", i = error.error.stack || "";
         var msg = __assign(__assign({}, commonMsg), {
@@ -628,6 +694,7 @@
     }
     // 捕获资源异常
     function reportResourceError(error) {
+        debugger;
         var commonMsg = getCommonMsg();
         var target = error.target;
         var msg = __assign(__assign({}, commonMsg), {
@@ -641,6 +708,7 @@
     }
     // 捕获promise异常
     function reportPromiseError(error) {
+        debugger;
         var commonMsg = getCommonMsg();
         var msg = __assign(__assign({}, commonMsg), {
             t: 'error',
@@ -650,6 +718,7 @@
         report(msg);
     }
     function handleResource() {
+        debugger;
         var performance = window.performance;
         if (!performance || "object" != typeof performance || "function" != typeof performance.getEntriesByType)
             return null;
@@ -707,6 +776,7 @@
         report(msg);
     }
     function handleApi(url, success, time, code, msg, beigin) {
+        debugger;
         if (!url) {
             warn('[retcode] api is null');
             return;
@@ -731,6 +801,7 @@
     }
     function handleSum(key, val) {
         if (val === void 0) { val = 1; }
+        debugger;
         var commonMsg = getCommonMsg();
         var g = splitGroup(key);
         var ret = __assign(__assign(__assign({}, commonMsg), g), {
@@ -741,6 +812,7 @@
     }
     function handleAvg(key, val) {
         if (val === void 0) { val = 1; }
+        debugger;
         var commonMsg = getCommonMsg();
         var g = splitGroup(key);
         var ret = __assign(__assign(__assign({}, commonMsg), g), {
@@ -750,6 +822,7 @@
         report(ret);
     }
     function handleMsg(key) {
+        debugger;
         var commonMsg = getCommonMsg();
         var g = splitGroup(key);
         var ret = __assign(__assign({}, commonMsg), {
@@ -772,7 +845,9 @@
     //   }
     //   report(ret)
     // }
+    // ？？？'bombayjs-circle-active'清除后加载最后
     function handleHover(e) {
+        debugger;
         var cls = document.getElementsByClassName(CIRCLECLS);
         if (cls.length > 0) {
             for (var i = 0; i < cls.length; i++) {
@@ -781,7 +856,9 @@
         }
         e.target.className += " " + CIRCLECLS;
     }
+    // 添加'bombayjs-circle-active'样式
     function insertCss() {
+        debugger;
         var content = "." + CIRCLECLS + "{border: #ff0000 2px solid;}";
         var style = document.createElement("style");
         style.type = "text/css";
@@ -795,10 +872,12 @@
         var head = document.getElementsByTagName("head")[0];
         head.appendChild(style);
     }
+    // 移除'bombayjs-circle-active'样式
     function removeCss() {
         var style = document.getElementById(CIRCLESTYLEID);
         style.parentNode.removeChild(style);
     }
+    // ？？？有什么用
     function listenCircleListener() {
         insertCss();
         GlobalVal.cssInserted = true;
@@ -809,6 +888,7 @@
         removeCss();
         GlobalVal.cssInserted = false;
         GlobalVal.circle = false;
+        // ？？？off会触发handleHover吗
         off('mouseover', handleHover);
     }
     function listenMessageListener() {
@@ -821,6 +901,7 @@
      *  v: value
      */
     function handleMessage(event) {
+        debugger;
         // 防止其他message的干扰
         if (!event.data || !event.data.t)
             return;
@@ -845,12 +926,14 @@
     // "debug", "info", "warn", "log", "error"
     function hackConsole() {
         if (window && window.console) {
+            // 递归预设的种类
             for (var e = Config.behavior.console, n = 0; e.length; n++) {
                 var r = e[n];
                 var action = window.console[r];
                 if (!window.console[r])
                     return;
                 (function (r, action) {
+                    // 利用闭包重写console方法
                     window.console[r] = function () {
                         var i = Array.prototype.slice.apply(arguments);
                         var s = {
@@ -872,10 +955,12 @@
      * 派送historystatechange historystatechange事件
      * @export
      * @param {('pushState' | 'replaceState')} e
+     * ？？？ 具体跑一下
      */
     function hackState(e) {
         var t = history[e];
         "function" == typeof t && (history[e] = function (n, i, s) {
+            debugger;
             !window['__bb_onpopstate_'] && hackOnpopstate(); // 调用pushState或replaceState时hack Onpopstate
             var c = 1 === arguments.length ? [arguments[0]] : Array.apply(null, arguments), u = location.href, f = t.apply(history, c);
             if (!s || "string" != typeof s)
@@ -896,11 +981,13 @@
         hackFetch();
         hackAjax();
     }
+    // ??? 可以具体跑一下
     function hackFetch() {
         if ("function" == typeof window.fetch) {
             var __oFetch_ = window.fetch;
             window['__oFetch_'] = __oFetch_;
             window.fetch = function (t, o) {
+                debugger;
                 var a = 1 === arguments.length ? [arguments[0]] : Array.apply(null, arguments);
                 var begin = Date.now(), url = (t && "string" != typeof t ? t.url : t) || "", page = parseUrl(url);
                 if (!page)
@@ -927,12 +1014,14 @@
         }
     }
     // 如果返回过长，会被截断，最长1000个字符
+    // ??? 具体跑一下
     function hackAjax() {
         if ("function" == typeof window.XMLHttpRequest) {
             var begin = 0, page = '';
             var __oXMLHttpRequest_ = window.XMLHttpRequest;
             window['__oXMLHttpRequest_'] = __oXMLHttpRequest_;
             window.XMLHttpRequest = function (t) {
+                debugger;
                 var xhr = new __oXMLHttpRequest_(t);
                 if (!xhr.addEventListener)
                     return xhr;
@@ -969,9 +1058,17 @@
             };
         }
     }
+    /**
+     * onPopState hack方法
+     * 调用history.pushState()或者history.replaceState()不会触发popstate事件.
+     * popstate事件只会在浏览器某些行为下触发, 比如点击后退、前进按钮
+     * 或者在JavaScript中调用history.back()、history.forward()、history.go()方法.
+     * */
     function hackOnpopstate() {
         window['__bb_onpopstate_'] = window.onpopstate;
         window.onpopstate = function () {
+            debugger;
+            // 专属组，[...arguments]就完事了
             for (var r = arguments.length, a = new Array(r), o = 0; o < r; o++)
                 a[o] = arguments[o];
             var page = Config.enableSPA ? parseHash(location.hash.toLowerCase()) : location.pathname.toLowerCase();
@@ -1028,7 +1125,7 @@
             hackConsole();
             Config.behavior.click && this.addListenClick();
         };
-        // 监听click
+        // 监听click & blur
         Bombay.prototype.addListenClick = function () {
             on('click', handleClick); // 非输入框点击，会过滤掉点击输入框
             on('blur', handleBlur); // 输入框失焦
@@ -1045,7 +1142,7 @@
             on('error', handleErr);
             //promise错误
             on('unhandledrejection', handleErr);
-            // window.addEventListener('rejectionhandled', rejectionhandled, true);
+            // ？？？接口请求的error在哪里捕获
         };
         Bombay.prototype.addListenAjax = function () {
             hackhook();
@@ -1053,8 +1150,10 @@
         // beforeunload
         Bombay.prototype.addListenUnload = function () {
             on('beforeunload', handleHealth);
+            // ？？？还没有卸载怎么就执行了destroy
             this.destroy();
         };
+        // ？？？录制还未实现呢
         Bombay.prototype.addRrweb = function () {
         };
         // 移除路由
@@ -1095,6 +1194,7 @@
             Config.isAjax && this.removeListenAjax();
             Config.isRecord && this.removeRrweb();
             Config.isResource && this.removeListenResource();
+            // ？？？为什么需要移除两次
             this.removeListenResource();
         };
         return Bombay;
@@ -1103,4 +1203,4 @@
 
     return Bombay;
 
-}));
+})));

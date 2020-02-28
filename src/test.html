@@ -6,13 +6,21 @@
 </head>
 <body>
 <script>
-    function testArgs () {
-      const arr = [...arguments]
-      console.log(Array.isArray(arr))
+    async function reject () {
+        return Promise.reject('test reject')
     }
 
-    testArgs('a', 'b', 'c')
+    async function main () {
+        try {
+            debugger
+            await reject()
+        } catch (err) {
+            debugger
+            console.log(err)
+        }
+    }
+
+    main()
 </script>
-<div id="id" class="  a   b c    d">阿打算是对方是否大是大非是否水电费姜辣素；的非</div>
 </body>
 </html>

@@ -4,7 +4,7 @@ import { Config } from './config'
 
 // hack console
 // "debug", "info", "warn", "log", "error"
-export function hackConsole() {
+export function  hackConsole() {
   if (window && window.console) {
     // 递归预设的种类
     for (var e = Config.behavior.console, n = 0; e.length; n++) {
@@ -40,6 +40,7 @@ export function hackConsole() {
 export function hackState(e: 'pushState' | 'replaceState') {
   var t = history[e]
   "function" == typeof t && (history[e] = function (n, i, s) {
+    debugger
     !window['__bb_onpopstate_'] && hackOnpopstate(); // 调用pushState或replaceState时hack Onpopstate
     var c = 1 === arguments.length ? [arguments[0]] : Array.apply(null, arguments),
         u = location.href,
@@ -73,6 +74,7 @@ function hackFetch(){
     var __oFetch_ = window.fetch
     window['__oFetch_'] = __oFetch_
     window.fetch = function(t, o) {
+      debugger
       var a = 1 === arguments.length ? [arguments[0]] : Array.apply(null, arguments);
       var begin = Date.now(),
           url = (t && "string" != typeof t ? t.url : t) || "",
@@ -110,6 +112,7 @@ function hackAjax() {
     var __oXMLHttpRequest_ = window.XMLHttpRequest
     window['__oXMLHttpRequest_'] = __oXMLHttpRequest_
     window.XMLHttpRequest = function(t) {
+      debugger
       var xhr = new __oXMLHttpRequest_(t)
       if (!xhr.addEventListener) return xhr
       var open = xhr.open,
@@ -155,6 +158,7 @@ function hackAjax() {
 export function hackOnpopstate() {
   window['__bb_onpopstate_'] = window.onpopstate
   window.onpopstate = function () {
+    debugger
     // 专属组，[...arguments]就完事了
     for (var r = arguments.length, a = new Array(r), o = 0; o < r; o++) a[o] = arguments[o];
     let page = Config.enableSPA ? parseHash(location.hash.toLowerCase()) : location.pathname.toLowerCase()

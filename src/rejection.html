@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+</head>
+<body>
+<script>
+    window.addEventListener('unhandledrejection', event => {
+        console.log('reject的信息未处理');
+    });
+
+    window.addEventListener('rejectionhandled', event => {
+        console.log('reject的信息已被捕获');
+    });
+
+    function foo() {
+        return Promise.reject('我是报错信息');
+    }
+
+    var r = foo();
+
+    // setTimeout(() => {
+    //     r.catch(e => {});
+    // }, 3000);
+</script>
+</body>
+</html>

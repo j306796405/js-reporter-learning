@@ -60,7 +60,7 @@ export default class Bombay {
     Config.behavior.click && this.addListenClick()
   }
 
-  // 监听click
+  // 监听click & blur
   addListenClick() {
     on('click', handleClick); // 非输入框点击，会过滤掉点击输入框
     on('blur', handleBlur); // 输入框失焦
@@ -79,7 +79,7 @@ export default class Bombay {
     on('error', handleErr)
     //promise错误
     on('unhandledrejection', handleErr)
-    // window.addEventListener('rejectionhandled', rejectionhandled, true);
+    // ？？？接口请求的error在哪里捕获
     
   }
 
@@ -90,9 +90,11 @@ export default class Bombay {
   // beforeunload
   addListenUnload() {
     on('beforeunload', handleHealth)
+    // ？？？还没有卸载怎么就执行了destroy
     this.destroy()
   }
 
+  // ？？？录制还未实现呢
   addRrweb() {
 
   }
@@ -147,6 +149,7 @@ export default class Bombay {
     Config.isAjax && this.removeListenAjax()
     Config.isRecord && this.removeRrweb()
     Config.isResource && this.removeListenResource()
+    // ？？？为什么需要移除两次
     this.removeListenResource()
   }
 }

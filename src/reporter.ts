@@ -2,7 +2,8 @@
 import { Config, } from './config'
 import { queryString, serialize, warn } from './utils/tools'
 
-// 上报  ？？？为啥上报health需要使用sendBeacon方法
+// 上报
+// 1: ？？？为啥上报health需要使用sendBeacon方法 2: ？？？写法过于复杂
 export function report(e: ReportData) {
     "res" === e.t ?
     send(e)
@@ -14,8 +15,16 @@ export function report(e: ReportData) {
 }
 
 // post上报
-// ？？？1：msg[msg.t]没看懂 2：为啥不使用图片的方式 3: 图片上报需要作长度限制
+// ？？？1：为啥不使用图片的方式 ？？？2: 图片上报需要作长度限制
 export function send(msg: ReportData) {
+  /**
+   * msg中会有t代表主题信息，对应的主题有对应的key
+   * msg: {
+   *     t: 'behavior',
+   *     behavior: { ... }
+   * }
+   * */
+  debugger
   var body = msg[msg.t]
   delete msg[msg.t]
   var url = `${Config.reportUrl}?${serialize(msg)}`

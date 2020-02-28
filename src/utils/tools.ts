@@ -1,4 +1,4 @@
-// 无操作
+// 返回一个空方法
 export const noop = function () {
 }
 
@@ -15,7 +15,7 @@ export function isObject(obj: any): boolean {
     return false;
 }
 
-// 随机字符串
+// 随机字符串 ？？？
 export function randomString() {
     for (var e, t, n = 20, r = new Array(n), a = Date.now().toString(36).split(""); n-- > 0;)
         t = (e = 36 * Math.random() | 0).toString(36), r[n] = e % 3 ? t : t.toUpperCase();
@@ -60,6 +60,10 @@ export function isTypeOf(data: any, type?: string) {
 // 事件绑定
 export const on = function (event, fn, remove?) {
     window.addEventListener ? window.addEventListener(event, function a(i) {
+        /**
+         * 很省行数的写法啊。。。
+         * this => window
+         * */
         remove && window.removeEventListener(event, a, true), fn.call(this, i)
     }, true) : window.attachEvent && window.attachEvent("on" + event, function i(a) {
         remove && window.detachEvent("on" + event, i), fn.call(this, a)
@@ -72,25 +76,31 @@ export const off = function (event, fn) {
         window.detachEvent(event, fn), this) : this
 }
 
-// ???
+// 获取spa的页面名称，如果e为空默认为首页
 export const parseHash = function (e: string) {
     return (e ? parseUrl(e.replace(/^#\/?/, "")) : "") || "[index]"
 }
 
 // 获取域名
 export const parseUrl = function (e: string) {
-    return e && "string" == typeof e ? e.replace(/^(https?:)?\/\//, "").replace(/\?.*$/, "") : ""
+    return e && "string" == typeof e
+        // 1: 剔除http或者https 2: 剔除？之后的传参
+        ? e.replace(/^(https?:)?\/\//, "").replace(/\?.*$/, "")
+        : ""
 }
 
 // 函数toString方法
+// ？？？ 没有太大的差别啊 "pushState() { [native code] }" 和原方法 "function replaceState() { [native code] }"
 export const fnToString = function (e: string) {
     return function () {
+        debugger
         return e + "() { [native code] }"
     }
 }
 
 // console.warn做了兼容处理，？？？但没做额外处理
 export const warn: any = function () {
+    debugger
     var e = "object" == typeof console ? console.warn : noop;
     try {
         var t = {
@@ -117,6 +127,7 @@ export const dispatchCustomEvent = function (e, t) {
 
 // group::key
 export const splitGroup = function (e: string) {
+    debugger
     var n = e.split("::");
     return n.length > 1 ? {
         group: n[0],

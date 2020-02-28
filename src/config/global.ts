@@ -30,6 +30,7 @@ export function setGlobalSid() {
 
 // 设置页面健康度
 export function setGlobalHealth(type: string, success?:boolean) {
+  debugger
   if (type === 'error') GlobalVal._health.errcount++
   if (type === 'api' && success) GlobalVal._health.apisucc++
   if (type === 'api' && !success) GlobalVal._health.apifail++

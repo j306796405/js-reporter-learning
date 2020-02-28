@@ -28,6 +28,7 @@ export function handlePv(): void {
 // 处理html node
 // return div#id.a.b.c[name="sex"][type="input"]
 const normalTarget = function (e) {
+  debugger
   var t, n, r, a, i, o = [];
   if (!e || !e.tagName) return "";
   // '，'分割的话会取最后一个'，'的bool作为结果
@@ -50,6 +51,7 @@ const getElmPath = function (e) {
    * nodeType 1: 节点 2：属性 3：text
    * 非dom节点 直接return
    * */
+  debugger
   if (!e || 1 !== e.nodeType) return "";
   var ret = [],
       deepLength = 0, // 层数，最多5层
@@ -64,6 +66,7 @@ const getElmPath = function (e) {
 // 点击事件上报
 // ？？？跑一下
 export function handleClick(event) {
+  debugger
   // 正在圈选
   if (GlobalVal.circle) {
     let target = event.target
@@ -117,6 +120,7 @@ export function handleClick(event) {
 
 // blur事件上报
 export function handleBlur(event) {
+  debugger
   var target;
   try {
     target = event.target
@@ -188,6 +192,7 @@ export function handlePerf(): void {
   now = Date.now(),
   type = 1;
   let stateCheck = setInterval(() => {
+    debugger
     if (timing.loadEventEnd) {
       clearInterval(stateCheck)
 
@@ -259,8 +264,7 @@ export function handleHistorystatechange(e): void {
   page && setPage(page, false)
 }
 
-// 处理pv
-// ？？？跑一下
+// 上报跳转动作信息
 export function handleNavigation(page): void {
   let commonMsg = getCommonMsg()
   let msg: behaviorMsg = {
@@ -284,6 +288,7 @@ export function setPage(page, isFirst?: boolean) {
   // 第一次不上传健康指标
   !isFirst && handleHealth()
   handleNavigation(page)
+  // ？？？后续需要测试iframe的情况
   if (isInIframe) {
     window.parent.postMessage({
       t: 'setPage',
@@ -298,6 +303,7 @@ export function setPage(page, isFirst?: boolean) {
 
 // 上报健康信息
 export function handleHealth() {
+  debugger
   let healthy = GlobalVal._health.errcount ? 0 : 1
   let commonMsg = getCommonMsg()
   let ret: healthMsg = {
@@ -315,6 +321,7 @@ export function handleHealth() {
 
 // 处理错误
 export function handleErr(error): void {
+  debugger
   switch (error.type) {
     case 'error':
         error instanceof ErrorEvent ? reportCaughtError(error)  : reportResourceError(error)
@@ -331,6 +338,7 @@ export function handleErr(error): void {
 
 // 捕获js异常
 function reportCaughtError(error:any):void{
+  debugger
   let commonMsg = getCommonMsg()
   let n = error.name || "CustomError",
       a = error.message || "",
@@ -353,6 +361,7 @@ function reportCaughtError(error:any):void{
 
 // 捕获资源异常
 function reportResourceError(error:any):void{
+  debugger
   let commonMsg = getCommonMsg()
   let target = error.target
   let msg: ErrorMsg = {
@@ -370,6 +379,7 @@ function reportResourceError(error:any):void{
 
 // 捕获promise异常
 function reportPromiseError(error:any):void{
+  debugger
   let commonMsg = getCommonMsg()
   let msg: ErrorMsg = {
     ...commonMsg,
@@ -405,6 +415,7 @@ function reportHttpError(msg:CommonMsg,data:any):void{
 }
 
 export function handleResource() {
+  debugger
   var performance = window.performance
   if (!performance || "object" != typeof performance || "function" != typeof performance.getEntriesByType) return null;
   let commonMsg = getCommonMsg()
@@ -469,6 +480,7 @@ export function handleResource() {
 }
 
 export function handleApi(url, success, time, code, msg, beigin) {
+  debugger
   if (!url) {
     warn('[retcode] api is null')
     return
@@ -496,6 +508,7 @@ export function handleApi(url, success, time, code, msg, beigin) {
 }
 
 export function handleSum(key: string, val: number = 1) {
+  debugger
   let commonMsg = getCommonMsg()
   let g = splitGroup(key)
   let ret: sumMsg = {
@@ -510,6 +523,7 @@ export function handleSum(key: string, val: number = 1) {
 }
 
 export function handleAvg(key: string, val: number = 1) {
+  debugger
   let commonMsg = getCommonMsg()
   let g = splitGroup(key)
   let ret: avgMsg = {
@@ -524,6 +538,7 @@ export function handleAvg(key: string, val: number = 1) {
 }
 
 export function handleMsg(key: string) {
+  debugger
   let commonMsg = getCommonMsg()
   let g = splitGroup(key)
   let ret: msgMsg = {
@@ -553,6 +568,7 @@ export function handleMsg(key: string) {
 
 // ？？？'bombayjs-circle-active'清除后加载最后
 export function handleHover(e) {
+  debugger
   var cls = document.getElementsByClassName(CIRCLECLS)
   if (cls.length > 0) {
     for (var i = 0; i < cls.length; i++) {
@@ -564,6 +580,7 @@ export function handleHover(e) {
 
 // 添加'bombayjs-circle-active'样式
 export function insertCss() {
+  debugger
   var content = `.${CIRCLECLS}{border: #ff0000 2px solid;}`
   var style = document.createElement("style");
   style.type = "text/css";
@@ -583,6 +600,7 @@ export function removeCss() {
   style.parentNode.removeChild(style)
 }
 
+// ？？？有什么用
 export function listenCircleListener() {
   insertCss()
   GlobalVal.cssInserted = true
@@ -609,6 +627,7 @@ export function listenMessageListener() {
  *  v: value
  */
 function handleMessage(event) {
+  debugger
   // 防止其他message的干扰
   if (!event.data || !event.data.t) return
   if (event.data.t === 'setCircle') {
