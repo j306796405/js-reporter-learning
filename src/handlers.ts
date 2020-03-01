@@ -28,7 +28,6 @@ export function handlePv(): void {
 // 处理html node
 // return div#id.a.b.c[name="sex"][type="input"]
 const normalTarget = function (e) {
-  debugger
   var t, n, r, a, i, o = [];
   if (!e || !e.tagName) return "";
   // '，'分割的话会取最后一个'，'的bool作为结果
@@ -51,12 +50,12 @@ const getElmPath = function (e) {
    * nodeType 1: 节点 2：属性 3：text
    * 非dom节点 直接return
    * */
-  debugger
   if (!e || 1 !== e.nodeType) return "";
   var ret = [],
       deepLength = 0, // 层数，最多5层
       elm = '' // 元素
   ret.push(`(${e.innerText.substr(0, 50)})`)
+  // ？？？如果给html增加了class,id会有bug,会继续查找下去
   for (var t = e || null; t && deepLength++ < 5 &&!("html" === (elm = normalTarget(t)));) {
     ret.push(elm), t = t.parentNode;
   }
@@ -121,7 +120,6 @@ export function handleClick(event) {
 
 // blur事件上报
 export function handleBlur(event) {
-  debugger
   var target;
   try {
     target = event.target
@@ -193,9 +191,7 @@ export function handlePerf(): void {
   now = Date.now(),
   type = 1;
   let stateCheck = setInterval(() => {
-    debugger
     if (timing.loadEventEnd) {
-      debugger
       clearInterval(stateCheck)
 
       // 根据PerformanceNavigationTiming计算更准确
@@ -261,7 +257,7 @@ export function handleHashchange(e): void {
   page && setPage(page, false)
 }
 
-// 处理hash变化
+// 处理hash变化 pushState/replaceState
 export function handleHistorystatechange(e): void {
   let page = Config.enableSPA ? parseHash(e.detail.toLowerCase()) : e.detail.toLowerCase()
   page && setPage(page, false)
@@ -306,7 +302,6 @@ export function setPage(page, isFirst?: boolean) {
 
 // 上报健康信息
 export function handleHealth() {
-  debugger
   let healthy = GlobalVal._health.errcount ? 0 : 1
   let commonMsg = getCommonMsg()
   let ret: healthMsg = {
@@ -324,7 +319,6 @@ export function handleHealth() {
 
 // 处理错误
 export function handleErr(error): void {
-  debugger
   switch (error.type) {
     case 'error':
         error instanceof ErrorEvent ? reportCaughtError(error)  : reportResourceError(error)
@@ -419,7 +413,6 @@ function reportHttpError(msg:CommonMsg,data:any):void{
 }
 
 export function handleResource() {
-  debugger
   var performance = window.performance
   if (!performance || "object" != typeof performance || "function" != typeof performance.getEntriesByType) return null;
   let commonMsg = getCommonMsg()
@@ -517,7 +510,6 @@ export function handleApi(url, success, time, code, msg, beigin) {
 }
 
 export function handleSum(key: string, val: number = 1) {
-  debugger
   let commonMsg = getCommonMsg()
   let g = splitGroup(key)
   let ret: sumMsg = {
@@ -532,7 +524,6 @@ export function handleSum(key: string, val: number = 1) {
 }
 
 export function handleAvg(key: string, val: number = 1) {
-  debugger
   let commonMsg = getCommonMsg()
   let g = splitGroup(key)
   let ret: avgMsg = {
@@ -547,7 +538,6 @@ export function handleAvg(key: string, val: number = 1) {
 }
 
 export function handleMsg(key: string) {
-  debugger
   let commonMsg = getCommonMsg()
   let g = splitGroup(key)
   let ret: msgMsg = {

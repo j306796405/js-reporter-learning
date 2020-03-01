@@ -5,7 +5,6 @@ import { Config } from './config'
 // hack console
 // "debug", "info", "warn", "log", "error"
 export function  hackConsole() {
-  debugger
   if (window && window.console) {
     // 递归预设的种类
     for (var e = Config.behavior.console, n = 0; e.length; n++) {
@@ -20,7 +19,6 @@ export function  hackConsole() {
              * 外部：action !== window.console[r]
              * 内部：action === window.console[r] 无限递归
              * */
-            debugger
             var i = Array.prototype.slice.apply(arguments)
             var s: consoleBehavior = {
               type: "console",
@@ -46,7 +44,6 @@ export function  hackConsole() {
  */
 export function hackState(e: 'pushState' | 'replaceState') {
   var t = history[e]
-  debugger
   "function" == typeof t && (history[e] = function (n, i, s) {
     debugger
     !window['__bb_onpopstate_'] && hackOnpopstate(); // 调用pushState或replaceState时hack Onpopstate
@@ -120,7 +117,6 @@ function hackAjax() {
     var __oXMLHttpRequest_ = window.XMLHttpRequest
     window['__oXMLHttpRequest_'] = __oXMLHttpRequest_
     window.XMLHttpRequest = function(t) {
-      debugger
       var xhr = new __oXMLHttpRequest_(t)
       if (!xhr.addEventListener) return xhr
       var open = xhr.open,
@@ -166,7 +162,6 @@ function hackAjax() {
 export function hackOnpopstate() {
   window['__bb_onpopstate_'] = window.onpopstate
   window.onpopstate = function () {
-    debugger
     // 专属组，[...arguments]就完事了
     for (var r = arguments.length, a = new Array(r), o = 0; o < r; o++) a[o] = arguments[o];
     let page = Config.enableSPA ? parseHash(location.hash.toLowerCase()) : location.pathname.toLowerCase()

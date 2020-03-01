@@ -90,7 +90,6 @@ export const parseUrl = function (e: string) {
 // 没啥区别！！！ "pushState() { [native code] }" 和原方法 "function replaceState() { [native code] }"
 export const fnToString = function (e: string) {
     return function () {
-        debugger
         return e + "() { [native code] }"
     }
 }
@@ -122,8 +121,8 @@ export const dispatchCustomEvent = function (e, t) {
 }
 
 // group::key
+// ！！！代码貌似多余
 export const splitGroup = function (e: string) {
-    debugger
     var n = e.split("::");
     return n.length > 1 ? {
         group: n[0],

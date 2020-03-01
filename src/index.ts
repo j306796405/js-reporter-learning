@@ -11,10 +11,6 @@ export default class Bombay {
   }
 
   init(options) {
-    debugger
-    warn('AAAA')
-    warn('BBBB')
-    warn('CCCC')
     // 没有token,则不监听任何事件
     if (options && !options.token) {
       console.warn('请输入一个token')
@@ -94,8 +90,9 @@ export default class Bombay {
   // beforeunload
   addListenUnload() {
     on('beforeunload', handleHealth)
-    // ？？？还没有卸载怎么就执行了destroy
-    // this.destroy()
+    on('beforeunload', () => {
+      this.destroy()
+    })
   }
 
   // ？？？录制还未实现呢
@@ -131,14 +128,17 @@ export default class Bombay {
 
   }
 
+  // ！！！代码貌似多余
   sum(key: string, val: number) {
     handleSum(key, val)
   }
 
+  // ！！！代码貌似多余
   avg(key: string, val: number) {
     handleAvg(key, val)
   }
 
+  // ！！！代码貌似多余
   msg(key: string) {
     handleMsg(key)
   }
@@ -148,13 +148,10 @@ export default class Bombay {
   }
 
   destroy() {
-    debugger
     Config.enableSPA && this.removeListenRouterChange();
     Config.isError && this.removeListenJs()
     Config.isAjax && this.removeListenAjax()
     Config.isRecord && this.removeRrweb()
     Config.isResource && this.removeListenResource()
-    // ？？？为什么需要移除两次
-    this.removeListenResource()
   }
 }

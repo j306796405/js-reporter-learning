@@ -15,7 +15,6 @@
     const _getName = o.getName;
 
     o.getName = function () {
-        debugger
         console.log('fake getName')
         _getName.apply(null)
     }

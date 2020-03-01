@@ -5,7 +5,6 @@ import { queryString, serialize, warn } from './utils/tools'
 // 上报
 // 1: ？？？为啥上报health需要使用sendBeacon方法 2: ？？？写法过于复杂
 export function report(e: ReportData) {
-  debugger
     "res" === e.t ?
     send(e)
       : "error" === e.t ? send(e)

@@ -155,7 +155,6 @@
     // 没啥区别！！！ "pushState() { [native code] }" 和原方法 "function replaceState() { [native code] }"
     var fnToString = function (e) {
         return function () {
-            debugger;
             return e + "() { [native code] }";
         };
     };
@@ -184,8 +183,8 @@
         window.dispatchEvent(r);
     };
     // group::key
+    // ！！！代码貌似多余
     var splitGroup = function (e) {
-        debugger;
         var n = e.split("::");
         return n.length > 1 ? {
             group: n[0],
@@ -322,7 +321,6 @@
     // 上报
     // 1: ？？？为啥上报health需要使用sendBeacon方法 2: ？？？写法过于复杂
     function report(e) {
-        debugger;
         "res" === e.t ?
             send(e)
             : "error" === e.t ? send(e)
@@ -399,7 +397,6 @@
     // 处理html node
     // return div#id.a.b.c[name="sex"][type="input"]
     var normalTarget = function (e) {
-        debugger;
         var t, n, r, a, i, o = [];
         if (!e || !e.tagName)
             return "";
@@ -423,12 +420,12 @@
          * nodeType 1: 节点 2：属性 3：text
          * 非dom节点 直接return
          * */
-        debugger;
         if (!e || 1 !== e.nodeType)
             return "";
         var ret = [], deepLength = 0, // 层数，最多5层
         elm = ''; // 元素
         ret.push("(" + e.innerText.substr(0, 50) + ")");
+        // ？？？如果给html增加了class,id会有bug,会继续查找下去
         for (var t = e || null; t && deepLength++ < 5 && !("html" === (elm = normalTarget(t)));) {
             ret.push(elm), t = t.parentNode;
         }
@@ -491,7 +488,6 @@
     }
     // blur事件上报
     function handleBlur(event) {
-        debugger;
         var target;
         try {
             target = event.target;
@@ -554,9 +550,7 @@
             load: 0 // domready时间
         }, timing = performance.timing || {}, now = Date.now(), type = 1;
         var stateCheck = setInterval(function () {
-            debugger;
             if (timing.loadEventEnd) {
-                debugger;
                 clearInterval(stateCheck);
                 // 根据PerformanceNavigationTiming计算更准确
                 if ("function" == typeof window.PerformanceNavigationTiming) {
@@ -611,7 +605,7 @@
         var page = Config.enableSPA ? parseHash(location.hash.toLowerCase()) : location.pathname.toLowerCase();
         page && setPage(page, false);
     }
-    // 处理hash变化
+    // 处理hash变化 pushState/replaceState
     function handleHistorystatechange(e) {
         var page = Config.enableSPA ? parseHash(e.detail.toLowerCase()) : e.detail.toLowerCase();
         page && setPage(page, false);
@@ -650,7 +644,6 @@
     }
     // 上报健康信息
     function handleHealth() {
-        debugger;
         var healthy = GlobalVal._health.errcount ? 0 : 1;
         var commonMsg = getCommonMsg();
         var ret = __assign(__assign(__assign({}, commonMsg), GlobalVal._health), {
@@ -663,7 +656,6 @@
     }
     // 处理错误
     function handleErr(error) {
-        debugger;
         switch (error.type) {
             case 'error':
                 error instanceof ErrorEvent ? reportCaughtError(error) : reportResourceError(error);
@@ -721,7 +713,6 @@
         report(msg);
     }
     function handleResource() {
-        debugger;
         var performance = window.performance;
         if (!performance || "object" != typeof performance || "function" != typeof performance.getEntriesByType)
             return null;
@@ -809,7 +800,6 @@
     }
     function handleSum(key, val) {
         if (val === void 0) { val = 1; }
-        debugger;
         var commonMsg = getCommonMsg();
         var g = splitGroup(key);
         var ret = __assign(__assign(__assign({}, commonMsg), g), {
@@ -820,7 +810,6 @@
     }
     function handleAvg(key, val) {
         if (val === void 0) { val = 1; }
-        debugger;
         var commonMsg = getCommonMsg();
         var g = splitGroup(key);
         var ret = __assign(__assign(__assign({}, commonMsg), g), {
@@ -830,7 +819,6 @@
         report(ret);
     }
     function handleMsg(key) {
-        debugger;
         var commonMsg = getCommonMsg();
         var g = splitGroup(key);
         var ret = __assign(__assign({}, commonMsg), {
@@ -933,7 +921,6 @@
     // hack console
     // "debug", "info", "warn", "log", "error"
     function hackConsole() {
-        debugger;
         if (window && window.console) {
             // 递归预设的种类
             for (var e = Config.behavior.console, n = 0; e.length; n++) {
@@ -949,7 +936,6 @@
                          * 外部：action !== window.console[r]
                          * 内部：action === window.console[r] 无限递归
                          * */
-                        debugger;
                         var i = Array.prototype.slice.apply(arguments);
                         var s = {
                             type: "console",
@@ -974,7 +960,6 @@
      */
     function hackState(e) {
         var t = history[e];
-        debugger;
         "function" == typeof t && (history[e] = function (n, i, s) {
             debugger;
             !window['__bb_onpopstate_'] && hackOnpopstate(); // 调用pushState或replaceState时hack Onpopstate
@@ -1037,7 +1022,6 @@
             var __oXMLHttpRequest_ = window.XMLHttpRequest;
             window['__oXMLHttpRequest_'] = __oXMLHttpRequest_;
             window.XMLHttpRequest = function (t) {
-                debugger;
                 var xhr = new __oXMLHttpRequest_(t);
                 if (!xhr.addEventListener)
                     return xhr;
@@ -1083,7 +1067,6 @@
     function hackOnpopstate() {
         window['__bb_onpopstate_'] = window.onpopstate;
         window.onpopstate = function () {
-            debugger;
             // 专属组，[...arguments]就完事了
             for (var r = arguments.length, a = new Array(r), o = 0; o < r; o++)
                 a[o] = arguments[o];
@@ -1100,10 +1083,6 @@
             this.init(options);
         }
         Bombay.prototype.init = function (options) {
-            debugger;
-            warn('AAAA');
-            warn('BBBB');
-            warn('CCCC');
             // 没有token,则不监听任何事件
             if (options && !options.token) {
                 console.warn('请输入一个token');
@@ -1169,9 +1148,11 @@
         };
         // beforeunload
         Bombay.prototype.addListenUnload = function () {
+            var _this = this;
             on('beforeunload', handleHealth);
-            // ？？？还没有卸载怎么就执行了destroy
-            // this.destroy()
+            on('beforeunload', function () {
+                _this.destroy();
+            });
         };
         // ？？？录制还未实现呢
         Bombay.prototype.addRrweb = function () {
@@ -1196,12 +1177,15 @@
         };
         Bombay.prototype.removeRrweb = function () {
         };
+        // ！！！代码貌似多余
         Bombay.prototype.sum = function (key, val) {
             handleSum(key, val);
         };
+        // ！！！代码貌似多余
         Bombay.prototype.avg = function (key, val) {
             handleAvg(key, val);
         };
+        // ！！！代码貌似多余
         Bombay.prototype.msg = function (key) {
             handleMsg(key);
         };
@@ -1209,14 +1193,11 @@
             handleApi(api, success, time, code, msg, Date.now());
         };
         Bombay.prototype.destroy = function () {
-            debugger;
             Config.enableSPA && this.removeListenRouterChange();
             Config.isError && this.removeListenJs();
             Config.isAjax && this.removeListenAjax();
             Config.isRecord && this.removeRrweb();
             Config.isResource && this.removeListenResource();
-            // ？？？为什么需要移除两次
-            this.removeListenResource();
         };
         return Bombay;
     }());
