@@ -96,6 +96,7 @@ export function handleClick(event) {
   }
   if (target.nodeName === 'INPUT' || target.nodeName === 'TEXTAREA') return
 
+  // ？？？这是啥意思
   if (0 !== target.length) {
     var behavior: eventBehavior = {
       type: 'ui.click',
@@ -194,11 +195,13 @@ export function handlePerf(): void {
   let stateCheck = setInterval(() => {
     debugger
     if (timing.loadEventEnd) {
+      debugger
       clearInterval(stateCheck)
 
       // 根据PerformanceNavigationTiming计算更准确
       if ("function" == typeof window.PerformanceNavigationTiming) {
           var c = performance.getEntriesByType("navigation")[0];
+          // ？？？type是什么意思
           c && (timing = c, type = 2)
       }
 
@@ -285,7 +288,7 @@ export function handleNavigation(page): void {
 
 // 上报页面信息
 export function setPage(page, isFirst?: boolean) {
-  // 第一次不上传健康指标
+  // 首次不上传健康指标
   !isFirst && handleHealth()
   handleNavigation(page)
   // ？？？后续需要测试iframe的情况
@@ -369,6 +372,7 @@ function reportResourceError(error:any):void{
     ...{
       t: 'error',
       st: 'resource',
+      // ？？？是不是需要转义
       msg: target.outerHTML,
       file: target.src,
       stack: target.localName.toUpperCase(),
@@ -431,6 +435,7 @@ export function handleResource() {
   var i = performance.timing || {},
       o = performance.getEntriesByType("resource") || [];
   if ("function" == typeof window.PerformanceNavigationTiming) {
+    // ？？？为什么要取第一个
     var s = performance.getEntriesByType("navigation")[0];
     s && (i = s)
   }
@@ -447,17 +452,21 @@ export function handleResource() {
   })
   // 过滤忽略的url
   o = o.filter(item => {
+    // ？？？这里应该写错了，应该是"ignoreUrls"
     var include = findIndex(getConfig('ignore').ignoreApis, ignoreApi => item.name.indexOf(ignoreApi) > -1)
-    return include > -1 ? false : true
+    return include <= -1
   })
 
   // 兼容Edge浏览器无法直接使用PerformanceResourceTiming对象类型的数据进行上报，处理方式是定义变量重新赋值
+  // ？？？需要验证
   if (checkEdge()) {
+    debugger
     var edgeResources = []
     each(o, function (oItem) {
       edgeResources.push({
         connectEnd: oItem.connectEnd,
         connectStart: oItem.connectStart,
+        // ？？？这个是不是写错了
         domainLookupEnd: oItem.connectStart,
         domainLookupStart: oItem.domainLookupStart,
         duration: oItem.duration,

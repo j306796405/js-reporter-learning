@@ -1,6 +1,6 @@
 import { Config, setConfig } from './config'
 import { handleErr, handlePv, handlePerf, handleHashchange, handleHistorystatechange, handleClick, handleBlur, handleResource, handleSum, handleAvg, handleMsg, handleHealth, handleApi,setPage, listenMessageListener, listenCircleListener, removeCircleListener, } from './handlers'
-import {on,off,parseHash} from './utils/tools'
+import {on,off,parseHash, warn} from './utils/tools'
 import { hackState, hackConsole, hackhook, } from './hack'
 import { setGlobalPage, setGlobalSid, setGlobalHealth, GlobalVal, } from './config/global'
 
@@ -11,6 +11,10 @@ export default class Bombay {
   }
 
   init(options) {
+    debugger
+    warn('AAAA')
+    warn('BBBB')
+    warn('CCCC')
     // 没有token,则不监听任何事件
     if (options && !options.token) {
       console.warn('请输入一个token')
@@ -91,7 +95,7 @@ export default class Bombay {
   addListenUnload() {
     on('beforeunload', handleHealth)
     // ？？？还没有卸载怎么就执行了destroy
-    this.destroy()
+    // this.destroy()
   }
 
   // ？？？录制还未实现呢
@@ -144,6 +148,7 @@ export default class Bombay {
   }
 
   destroy() {
+    debugger
     Config.enableSPA && this.removeListenRouterChange();
     Config.isError && this.removeListenJs()
     Config.isAjax && this.removeListenAjax()

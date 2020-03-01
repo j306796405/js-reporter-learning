@@ -1,6 +1,5 @@
 // 返回一个空方法
-export const noop = function () {
-}
+export const noop = function () {}
 
 // URI编码
 export function queryString(obj: object): string {
@@ -9,10 +8,8 @@ export function queryString(obj: object): string {
 
 // 是否是对象
 export function isObject(obj: any): boolean {
-    if (Object.prototype.toString.call(obj) == "[object Object]" || Object.prototype.toString.call(obj) == "[object Array]") {
-        return true
-    }
-    return false;
+    return Object.prototype.toString.call(obj) == "[object Object]" || Object.prototype.toString.call(obj) == "[object Array]";
+
 }
 
 // 随机字符串 ？？？
@@ -61,7 +58,7 @@ export function isTypeOf(data: any, type?: string) {
 export const on = function (event, fn, remove?) {
     window.addEventListener ? window.addEventListener(event, function a(i) {
         /**
-         * 很省行数的写法啊。。。
+         * ","是很省行数的写法啊。。。
          * this => window
          * */
         remove && window.removeEventListener(event, a, true), fn.call(this, i)
@@ -90,7 +87,7 @@ export const parseUrl = function (e: string) {
 }
 
 // 函数toString方法
-// ？？？ 没有太大的差别啊 "pushState() { [native code] }" 和原方法 "function replaceState() { [native code] }"
+// 没啥区别！！！ "pushState() { [native code] }" 和原方法 "function replaceState() { [native code] }"
 export const fnToString = function (e: string) {
     return function () {
         debugger
@@ -98,9 +95,8 @@ export const fnToString = function (e: string) {
     }
 }
 
-// console.warn做了兼容处理，？？？但没做额外处理
+// 此处使用了闭包，返回的warn函数不会被劫持
 export const warn: any = function () {
-    debugger
     var e = "object" == typeof console ? console.warn : noop;
     try {
         var t = {

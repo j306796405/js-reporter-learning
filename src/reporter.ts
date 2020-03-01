@@ -5,6 +5,7 @@ import { queryString, serialize, warn } from './utils/tools'
 // 上报
 // 1: ？？？为啥上报health需要使用sendBeacon方法 2: ？？？写法过于复杂
 export function report(e: ReportData) {
+  debugger
     "res" === e.t ?
     send(e)
       : "error" === e.t ? send(e)
@@ -24,7 +25,6 @@ export function send(msg: ReportData) {
    *     behavior: { ... }
    * }
    * */
-  debugger
   var body = msg[msg.t]
   delete msg[msg.t]
   var url = `${Config.reportUrl}?${serialize(msg)}`
@@ -36,6 +36,7 @@ export function send(msg: ReportData) {
 
 // post方式上传信息
 export function post(url, body) {
+  // 此处用的是原生方法所以不会被劫持
   var XMLHttpRequest = window.__oXMLHttpRequest_ || window.XMLHttpRequest;
   if (typeof XMLHttpRequest === 'function') {
     try {

@@ -24,7 +24,7 @@ export function getCommonMsg() {
   return data
 }
 
-// 获取页面 ？？？单页取值是否有问题
+// 获取页面
 function getPage(): string {
   if (GlobalVal.page) return GlobalVal.page
   else {

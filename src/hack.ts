@@ -5,6 +5,7 @@ import { Config } from './config'
 // hack console
 // "debug", "info", "warn", "log", "error"
 export function  hackConsole() {
+  debugger
   if (window && window.console) {
     // 递归预设的种类
     for (var e = Config.behavior.console, n = 0; e.length; n++) {
@@ -14,6 +15,12 @@ export function  hackConsole() {
         (function (r, action) {
           // 利用闭包重写console方法
           window.console[r] = function() {
+            /**
+             * 原方法需要写在外面，不然会导致无限递归
+             * 外部：action !== window.console[r]
+             * 内部：action === window.console[r] 无限递归
+             * */
+            debugger
             var i = Array.prototype.slice.apply(arguments)
             var s: consoleBehavior = {
               type: "console",
@@ -39,6 +46,7 @@ export function  hackConsole() {
  */
 export function hackState(e: 'pushState' | 'replaceState') {
   var t = history[e]
+  debugger
   "function" == typeof t && (history[e] = function (n, i, s) {
     debugger
     !window['__bb_onpopstate_'] && hackOnpopstate(); // 调用pushState或replaceState时hack Onpopstate

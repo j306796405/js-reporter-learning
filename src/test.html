@@ -6,21 +6,21 @@
 </head>
 <body>
 <script>
-    async function reject () {
-        return Promise.reject('test reject')
-    }
-
-    async function main () {
-        try {
-            debugger
-            await reject()
-        } catch (err) {
-            debugger
-            console.log(err)
+    const o = {
+        getName() {
+            return 'Jeffery'
         }
+    };
+
+    const _getName = o.getName;
+
+    o.getName = function () {
+        debugger
+        console.log('fake getName')
+        _getName.apply(null)
     }
 
-    main()
+    o.getName()
 </script>
 </body>
 </html>

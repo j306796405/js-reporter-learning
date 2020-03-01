@@ -81,8 +81,7 @@
     //# sourceMappingURL=index.js.map
 
     // 返回一个空方法
-    var noop = function () {
-    };
+    var noop = function () { };
     // 随机字符串 ？？？
     function randomString() {
         for (var e, t, n = 20, r = new Array(n), a = Date.now().toString(36).split(""); n-- > 0;)
@@ -128,7 +127,7 @@
     var on = function (event, fn, remove) {
         window.addEventListener ? window.addEventListener(event, function a(i) {
             /**
-             * 很省行数的写法啊。。。
+             * ","是很省行数的写法啊。。。
              * this => window
              * */
             remove && window.removeEventListener(event, a, true), fn.call(this, i);
@@ -153,16 +152,15 @@
             : "";
     };
     // 函数toString方法
-    // ？？？ 没有太大的差别啊 "pushState() { [native code] }" 和原方法 "function replaceState() { [native code] }"
+    // 没啥区别！！！ "pushState() { [native code] }" 和原方法 "function replaceState() { [native code] }"
     var fnToString = function (e) {
         return function () {
             debugger;
             return e + "() { [native code] }";
         };
     };
-    // console.warn做了兼容处理，？？？但没做额外处理
+    // 此处使用了闭包，返回的warn函数不会被劫持
     var warn = function () {
-        debugger;
         var e = "object" == typeof console ? console.warn : noop;
         try {
             var t = {
@@ -213,7 +211,6 @@
     };
     // 是不是iframe
     var isInIframe = self != top;
-    //# sourceMappingURL=tools.js.map
 
     // 默认参数
     var GlobalVal = {
@@ -280,7 +277,7 @@
         };
         return data;
     }
-    // 获取页面 ？？？单页取值是否有问题
+    // 获取页面
     function getPage() {
         if (GlobalVal.page)
             return GlobalVal.page;
@@ -325,6 +322,7 @@
     // 上报
     // 1: ？？？为啥上报health需要使用sendBeacon方法 2: ？？？写法过于复杂
     function report(e) {
+        debugger;
         "res" === e.t ?
             send(e)
             : "error" === e.t ? send(e)
@@ -344,7 +342,6 @@
          *     behavior: { ... }
          * }
          * */
-        debugger;
         var body = msg[msg.t];
         delete msg[msg.t];
         var url = Config.reportUrl + "?" + serialize(msg);
@@ -355,6 +352,7 @@
     }
     // post方式上传信息
     function post(url, body) {
+        // 此处用的是原生方法所以不会被劫持
         var XMLHttpRequest = window.__oXMLHttpRequest_ || window.XMLHttpRequest;
         if (typeof XMLHttpRequest === 'function') {
             try {
@@ -379,6 +377,7 @@
             ? window.navigator.sendBeacon(e)
             : warn("[monitor] navigator.sendBeacon not supported");
     }
+    //# sourceMappingURL=reporter.js.map
 
     var CIRCLECLS = 'bombayjs-circle-active'; // circle class类名
     var CIRCLESTYLEID = 'bombayjs-circle-css'; // 插入的style标签id
@@ -470,6 +469,7 @@
         }
         if (target.nodeName === 'INPUT' || target.nodeName === 'TEXTAREA')
             return;
+        // ？？？这是啥意思
         if (0 !== target.length) {
             var behavior = {
                 type: 'ui.click',
@@ -556,10 +556,12 @@
         var stateCheck = setInterval(function () {
             debugger;
             if (timing.loadEventEnd) {
+                debugger;
                 clearInterval(stateCheck);
                 // 根据PerformanceNavigationTiming计算更准确
                 if ("function" == typeof window.PerformanceNavigationTiming) {
                     var c = performance.getEntriesByType("navigation")[0];
+                    // ？？？type是什么意思
                     c && (timing = c, type = 2);
                 }
                 // 计算data
@@ -631,7 +633,7 @@
     }
     // 上报页面信息
     function setPage(page, isFirst) {
-        // 第一次不上传健康指标
+        // 首次不上传健康指标
         !isFirst && handleHealth();
         handleNavigation(page);
         // ？？？后续需要测试iframe的情况
@@ -700,6 +702,7 @@
         var msg = __assign(__assign({}, commonMsg), {
             t: 'error',
             st: 'resource',
+            // ？？？是不是需要转义
             msg: target.outerHTML,
             file: target.src,
             stack: target.localName.toUpperCase(),
@@ -731,6 +734,7 @@
         });
         var i = performance.timing || {}, o = performance.getEntriesByType("resource") || [];
         if ("function" == typeof window.PerformanceNavigationTiming) {
+            // ？？？为什么要取第一个
             var s = performance.getEntriesByType("navigation")[0];
             s && (i = s);
         }
@@ -746,16 +750,20 @@
         });
         // 过滤忽略的url
         o = o.filter(function (item) {
+            // ？？？这里应该写错了，应该是"ignoreUrls"
             var include = findIndex(getConfig('ignore').ignoreApis, function (ignoreApi) { return item.name.indexOf(ignoreApi) > -1; });
-            return include > -1 ? false : true;
+            return include <= -1;
         });
         // 兼容Edge浏览器无法直接使用PerformanceResourceTiming对象类型的数据进行上报，处理方式是定义变量重新赋值
+        // ？？？需要验证
         if (checkEdge()) {
+            debugger;
             var edgeResources = [];
             each(o, function (oItem) {
                 edgeResources.push({
                     connectEnd: oItem.connectEnd,
                     connectStart: oItem.connectStart,
+                    // ？？？这个是不是写错了
                     domainLookupEnd: oItem.connectStart,
                     domainLookupStart: oItem.domainLookupStart,
                     duration: oItem.duration,
@@ -925,6 +933,7 @@
     // hack console
     // "debug", "info", "warn", "log", "error"
     function hackConsole() {
+        debugger;
         if (window && window.console) {
             // 递归预设的种类
             for (var e = Config.behavior.console, n = 0; e.length; n++) {
@@ -935,6 +944,12 @@
                 (function (r, action) {
                     // 利用闭包重写console方法
                     window.console[r] = function () {
+                        /**
+                         * 原方法需要写在外面，不然会导致无限递归
+                         * 外部：action !== window.console[r]
+                         * 内部：action === window.console[r] 无限递归
+                         * */
+                        debugger;
                         var i = Array.prototype.slice.apply(arguments);
                         var s = {
                             type: "console",
@@ -959,6 +974,7 @@
      */
     function hackState(e) {
         var t = history[e];
+        debugger;
         "function" == typeof t && (history[e] = function (n, i, s) {
             debugger;
             !window['__bb_onpopstate_'] && hackOnpopstate(); // 调用pushState或replaceState时hack Onpopstate
@@ -1084,6 +1100,10 @@
             this.init(options);
         }
         Bombay.prototype.init = function (options) {
+            debugger;
+            warn('AAAA');
+            warn('BBBB');
+            warn('CCCC');
             // 没有token,则不监听任何事件
             if (options && !options.token) {
                 console.warn('请输入一个token');
@@ -1151,7 +1171,7 @@
         Bombay.prototype.addListenUnload = function () {
             on('beforeunload', handleHealth);
             // ？？？还没有卸载怎么就执行了destroy
-            this.destroy();
+            // this.destroy()
         };
         // ？？？录制还未实现呢
         Bombay.prototype.addRrweb = function () {
@@ -1189,6 +1209,7 @@
             handleApi(api, success, time, code, msg, Date.now());
         };
         Bombay.prototype.destroy = function () {
+            debugger;
             Config.enableSPA && this.removeListenRouterChange();
             Config.isError && this.removeListenJs();
             Config.isAjax && this.removeListenAjax();
